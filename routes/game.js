@@ -33,7 +33,7 @@ router.post("/list", controller.validateCreateGame, async(req, res, next) => {
             end_hour,
             location_link,
             player_spot_availability,
-            wek_recurring
+            week_recurring
         } = req.body;
         await db.query(`
   INSERT INTO games (
@@ -57,7 +57,6 @@ router.post("/list", controller.validateCreateGame, async(req, res, next) => {
             end_hour,
             location_link,
             player_spot_availability,
-            
             week_recurring,
         ]);
         res.status(201).send("Game created successfully !")
