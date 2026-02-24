@@ -1,5 +1,4 @@
 import express from "express"
-import db from "../configs/db.js"
 const router = express.Router(); 
 router.post("/login",(req,res,next)=>{
     try {
@@ -7,12 +6,13 @@ router.post("/login",(req,res,next)=>{
         if (email === process.env.EMAIL &&
              password === process.env.PASSWORD &&
               code == process.env.VER_CODE){
-            res.status(200);
+            res.sendStatus(200);
         }else {
-            res.status(401);
+            res.sendStatus(401);
         }
 
     } catch (err) {
         next(err);
     }
 });
+export default router;

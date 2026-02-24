@@ -1,6 +1,7 @@
 import express from "express"
 import gameRoute from "./routes/game.js"
 import playerRoute from "./routes/player.js";
+import authRoute from "./routes/auth.js"
 import { serverError } from "./configs/vars.js";
 import helmet from "helmet";
 import cors from "cors";
@@ -41,7 +42,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/game", gameRoute);
 app.use("/player", playerRoute);
-
+app.use("/auth",authRoute);
 app.use((err, req, res, next) => {
     console.log(err);
     res.status(500).json({

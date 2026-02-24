@@ -67,7 +67,7 @@ router.post("/list", controller.validateCreateGame, async(req, res, next) => {
 
 router.patch("/list/:gameID", controller.validateUpdateGame, async(req, res, next) => {
     try {
-
+        
         const values = [...req.sqlValues, req.params.gameID]
 
         const updatedData = await db.query(`UPDATE games SET ${req.sqlUpdatesCode} WHERE id = $${values.length} RETURNING *`, values);
