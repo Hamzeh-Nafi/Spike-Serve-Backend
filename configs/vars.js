@@ -1,0 +1,1 @@
+export const serverError = "Error within the server, try again in a few moments !";
