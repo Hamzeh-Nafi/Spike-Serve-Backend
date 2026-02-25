@@ -13,10 +13,11 @@ app.use(session({
   name: "volleyball.sid",
   secret: process.env.SECRET,
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    maxAge: 1000 * 60 * 60 * 24 
+    maxAge: 1000 * 60 * 60 * 24,
+    sameSite: "lax"
   }
 }));
 
