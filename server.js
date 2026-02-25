@@ -6,30 +6,19 @@ import { serverError } from "./configs/vars.js";
 import helmet from "helmet";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
-import session from "express-session";
-const app = express()
+const app = express();
 
-app.use(session({
-  name: "volleyball.sid",
-  secret: "change-this-secret",
-  resave: false,
-  saveUninitialized: true,
-  cookie: {
-    httpOnly: true,
-    maxAge: 1000 * 60 * 60 * 24 
-  }
-}));
+
 
 app.use(cors({
     origin: process.env.FRONTEND_ORIGIN,
     credentials: true
 }));
 
-app.use(express.json());
 
 app.use(helmet());
 
-export const authLimiter = rateLimit({
+const authLimiter = rateLimit({
     windowMs: 60 * 1000,
     max: 10,
     message: "Too many requests from this ip !"
@@ -42,7 +31,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/game", gameRoute);
 app.use("/player", playerRoute);
-app.use("/auth",authRoute);
+app.use("/auth",authLimiter,authRoute);
 app.use((err, req, res, next) => {
     console.log(err);
     res.status(500).json({
