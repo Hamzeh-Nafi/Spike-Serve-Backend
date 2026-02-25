@@ -7,7 +7,7 @@ import helmet from "helmet";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 import session from "express-session";
-const app = express()
+const app = express();
 
 app.use(session({
   name: "volleyball.sid",

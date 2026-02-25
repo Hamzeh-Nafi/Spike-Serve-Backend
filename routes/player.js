@@ -110,6 +110,56 @@ res.status(201).json({
     next(err);
   }
 });
+router.delete("/list/delete/:id",async (req,res)=>{
+try {
+    await db.query("BEGIN");
+
+    const playerRes = await db.query(
+      "SELECT id, game_id, is_player FROM players WHERE id = $1 FOR UPDATE",
+      [req.params.id]
+    );  
+    if (!playerRes.rows[0]) {
+      await db.query("ROLLBACK");
+      return res.status(404).send("Invalid cancel token");
+    }
+
+    const { id, game_id, is_player } = playerRes.rows[0];
+
+    await db.query("DELETE FROM players WHERE id = $1", [id]);
+
+    if (is_player) {
+      const waitingRes = await db.query(
+        `SELECT id FROM players
+         WHERE game_id = $1 AND is_waiting = true
+         ORDER BY entry_date ASC
+         LIMIT 1
+         FOR UPDATE`,
+        [game_id]
+      );
+
+      if (waitingRes.rows[0]) {
+        await db.query(
+          "UPDATE players SET is_player = true, is_waiting = false WHERE id = $1",
+          [waitingRes.rows[0].id]
+        );
+      }
+    }
+
+    await db.query("COMMIT");
+    if (req.session?.registrations?.[game_id]) {
+  req.session.registrations[game_id]--;
+  if (req.session.registrations[game_id] < 0) {
+    req.session.registrations[game_id] = 0;
+  }
+}
+
+    res.send("Cancelled successfully");
+
+  } catch (err) {
+    await db.query("ROLLBACK");
+    next(err);
+  }
+});
 
 router.delete("/list/cancel/:token", async (req, res, next) => {
   try {
